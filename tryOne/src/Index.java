@@ -14,9 +14,10 @@ public class Index {
         }
 
         System.out.println("Number is: " + (2.0 - 1.1));
-        System.out.println("Index works again!");
 
         stringMagic();
+
+        System.out.println("Done.");
     }
 
     private static void stringMagic() {
