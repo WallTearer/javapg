@@ -24,6 +24,9 @@ public class Game {
 
     private boolean usersMove;
 
+    /**
+     * Start the game of Tic Tac Toe
+     */
     public void play() {
         readUserFig();
 
@@ -41,45 +44,60 @@ public class Game {
 
             usersMove = !usersMove;
 
-            // TODO: evaluate result
-// REFACTOR THIS TO MAKE IT NOT UGLY!
-            // looking if there is a winning row
-            for (int row = 0; row < 3; row++) {
-                if (board[row][0] == ' ') {
-                    // this row is not complete yet
-                    continue;
-                }
-                if (board[row][0] == board[row][1] && board[row][1] == board[row][2]) {
-                    result = board[row][0] == userFig ? Result.WIN_USER : Result.WIN_COMP;
-                }
-            }
-            // looking if there is a winning column
-            for (int col = 0; col < 3; col++) {
-                if (board[0][col] == ' ') {
-                    // this column is not complete yet
-                    continue;
-                }
-                if (board[0][col] == board[1][col] && board[1][col] == board[2][col]) {
-                    result = board[0][col] == userFig ? Result.WIN_USER : Result.WIN_COMP;
-                }
-            }
-            // looking if there is a winning diagonal
-            if (board[1][1] != ' ' && board[0][0] == board[1][1] && board[1][1] == board[2][2]) {
-                result = board[0][0] == userFig ? Result.WIN_USER : Result.WIN_COMP;
-            }
-            if (board[1][1] != ' ' && board[0][2] == board[1][1] && board[1][1] == board[2][0]) {
-                result = board[0][2] == userFig ? Result.WIN_USER : Result.WIN_COMP;
-            }
-
-            if (result == null && !hasFreeCells()) {
-                result = Result.DRAW;
-            }
+            evaluateResult();
         }
 
         System.out.println("Game result is: " + result);
     }
 
+    /**
+     * Check if user/comp won or it's a draw
+     *
+     * @TODO: it now uses a basic way of determining the result, it could be optimized to have less iterations
+     * and less copy-pasted code (but atm it's out of scope of playing with Java's functionality and data structures)
+     */
+    private void evaluateResult() {
+        // looking if there is a winning row
+        for (int row = 0; row < 3; row++) {
+            if (board[row][0] == ' ') {
+                // this row is not complete yet
+                continue;
+            }
+            if (board[row][0] == board[row][1] && board[row][1] == board[row][2]) {
+                result = board[row][0] == userFig ? Result.WIN_USER : Result.WIN_COMP;
+            }
+        }
+        // looking if there is a winning column
+        for (int col = 0; col < 3; col++) {
+            if (board[0][col] == ' ') {
+                // this column is not complete yet
+                continue;
+            }
+            if (board[0][col] == board[1][col] && board[1][col] == board[2][col]) {
+                result = board[0][col] == userFig ? Result.WIN_USER : Result.WIN_COMP;
+            }
+        }
+        // looking if there is a winning diagonal
+        if (board[1][1] != ' ' && board[0][0] == board[1][1] && board[1][1] == board[2][2]) {
+            result = board[0][0] == userFig ? Result.WIN_USER : Result.WIN_COMP;
+        }
+        if (board[1][1] != ' ' && board[0][2] == board[1][1] && board[1][1] == board[2][0]) {
+            result = board[0][2] == userFig ? Result.WIN_USER : Result.WIN_COMP;
+        }
+
+        if (result == null && !hasFreeCells()) {
+            result = Result.DRAW;
+        }
+    }
+
+    /**
+     * Check if board has still free cells
+     * @return bool true if there are still free cells on the board
+     */
     private boolean hasFreeCells() {
+        // @TODO: atm this is a plain stupid way, it could be optimized by e.g. counting number of moves,
+        // or keeping set of available free cells and reducing this set after each move
+
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
                 if (board[row][col] == ' ') {
@@ -118,6 +136,9 @@ public class Game {
         usersMove = userFig == FIG_X;
     }
 
+    /**
+     * Initialize board with empty cells
+     */
     private void resetBoard() {
         for (int i=0; i<3; i++) {
             for (int j=0; j<3; j++) {
@@ -126,6 +147,9 @@ public class Game {
         }
     }
 
+    /**
+     * Output board with the current state
+     */
     private void drawBoard() {
         System.out.printf("%n  1   2   3%n");
 
@@ -170,7 +194,7 @@ public class Game {
     /**
      * Get position for row or column of the user's move
      * @param type row or column
-     * @return
+     * @return int
      */
     private int getIntPosition(String type) {
         int position = 0;
@@ -191,6 +215,9 @@ public class Game {
     /**
      * Handle computer's move.
      * Very stupid AI, the goal is to try basic Java tooling, not to build a smart robot
+     *
+     * @TODO: in future AI can look through columns/rows/diagonals and detect if there is already his mark there,
+     * so it can put another mark accordingly.
      */
     private void moveComp()
     {
